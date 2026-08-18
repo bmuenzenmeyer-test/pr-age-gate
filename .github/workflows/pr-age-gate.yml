@@ -1,0 +1,30 @@
+name: PR Age Gate (dogfooding)
+
+# Runs this repo's own action against its own PRs — `uses: ./` (not
+# @v1) deliberately, so a PR changing action.ts/cli.ts/etc. is tested
+# against ITS OWN changes, not the last published tag. That's the whole
+# point of wiring this in: to exercise real behavior before release.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  schedule:
+    - cron: "0 * * * *" # hourly — re-evaluates every open PR
+
+permissions:
+  checks: write
+  pull-requests: read
+
+jobs:
+  age-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./
+        with:
+          # 1h rather than the README's 48h default: short on purpose so
+          # you can actually watch a check flip red->green within a
+          # normal testing session instead of waiting two real days.
+          min-hours: "1"
+          bypass-labels: "skip-age-gate"
