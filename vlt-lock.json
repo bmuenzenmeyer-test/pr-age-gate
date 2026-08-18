@@ -1,0 +1,16 @@
+{
+  "lockfileVersion": 1,
+  "options": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "nodes": {
+    "~https_c++registry.npmjs.org~@types+node@26.2.0": [2,"@types/node","sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg=="],
+    "~https_c++registry.npmjs.org~typescript@5.9.3": [2,"typescript","sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",null,null,null,null,null,{  "tsc": "bin/tsc",  "tsserver": "bin/tsserver"}],
+    "~https_c++registry.npmjs.org~undici-types@8.3.0": [2,"undici-types","sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="]
+  },
+  "edges": {
+    "file~_d @types/node": "dev ^26.2.0 ~https_c++registry.npmjs.org~@types+node@26.2.0",
+    "file~_d typescript": "dev ^5.9.2 ~https_c++registry.npmjs.org~typescript@5.9.3",
+    "~https_c++registry.npmjs.org~@types+node@26.2.0 undici-types": "prod ~8.3.0 ~https_c++registry.npmjs.org~undici-types@8.3.0"
+  }
+}

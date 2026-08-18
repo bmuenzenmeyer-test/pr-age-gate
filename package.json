@@ -1,0 +1,26 @@
+{
+  "name": "pr-age-gate",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Verify (and, as a GitHub Action, enforce) that a pull request has been open for a configurable minimum number of hours before it's considered mergeable. Public-repo checks work with no token at all. Plain TypeScript, no build step, no runtime dependencies.",
+  "keywords": ["github", "github-actions", "pull-request", "ci"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "bin": {
+    "pr-age-gate": "./src/cli.ts"
+  },
+  "exports": {
+    ".": "./src/check-pr-age.ts"
+  },
+  "files": ["src", "!src/**/*.test.ts", "!src/test-helpers.ts", "action.yml", "README.md", "LICENSE"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/**/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^5.9.2"
+  }
+}

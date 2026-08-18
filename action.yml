@@ -1,0 +1,32 @@
+name: "PR Age Gate"
+description: "Keeps a check red until a pull request has been open for a configurable minimum number of hours, then turns it green. Runs as plain TypeScript via Node's native type stripping — no build step, no runtime dependencies."
+author: "Brian Muenzenmeyer"
+branding:
+  icon: "clock"
+  color: "orange"
+
+inputs:
+  min-hours:
+    description: "Minimum number of hours a PR must stay open before this check passes."
+    required: false
+    default: "48"
+  check-name:
+    description: "Name of the check run created/updated on the PR. Change this if you need more than one age gate on the same repo."
+    required: false
+    default: "pr-age-gate"
+  bypass-labels:
+    description: "Comma-separated PR labels that make this check pass immediately, regardless of age (e.g. \"urgent,hotfix\")."
+    required: false
+    default: ""
+  bypass-paths:
+    description: "Comma-separated glob patterns (e.g. \"docs/**,*.md\") — if every file the PR changes matches one, the check passes immediately regardless of age. Costs one extra API call per PR, only made when this is set."
+    required: false
+    default: ""
+  github-token:
+    description: "Token used to read PRs and create/update check runs. The default Actions token is sufficient."
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "node24"
+  main: "src/action.ts"

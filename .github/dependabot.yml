@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # NOTE: Dependabot's supported ecosystems don't include vlt (this repo's
+  # package manager — see README). It only recognizes npm/yarn/pnpm
+  # lockfiles, so pointing this at "npm" here is best-effort: it can read
+  # package.json's version ranges, but it won't understand vlt-lock.json.
+  # In practice this matters little since there are only two
+  # devDependencies (typescript, @types/node), both zero-risk, but it's
+  # worth knowing this isn't fully lockfile-aware the way it would be with
+  # a Dependabot-native package manager.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Actions in ci.yml/codeql.yml are pinned to commit SHAs (see comments
+    # there) — Dependabot still opens version-bump PRs against those pins,
+    # it just also updates the SHA, not only the version comment.
