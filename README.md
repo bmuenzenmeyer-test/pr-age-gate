@@ -29,7 +29,7 @@ name: PR Age Gate
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   schedule:
     - cron: "0 * * * *" # hourly — re-evaluates every open PR
 
