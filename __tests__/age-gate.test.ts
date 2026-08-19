@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { evaluateAgeGate, summaryFor } from "./age-gate.ts";
+import { evaluateAgeGate, summaryFor } from "../src/age-gate.ts";
 
 const now = new Date("2026-01-10T00:00:00Z");
 

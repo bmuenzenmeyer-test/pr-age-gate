@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { run } from "./action.ts";
+import { run } from "../src/action.ts";
 import { withMockServer } from "./test-helpers.ts";
 
 function writeEventFile(payload: unknown): string {

@@ -5,6 +5,7 @@
 // able to tell "the gate failed" apart from "the check itself broke,"
 // since those call for different responses (block a merge vs.
 // investigate/retry).
+import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { checkPrAge } from "./check-pr-age.ts";
 import { parseCommaSeparated } from "./bypass.ts";
@@ -67,8 +68,22 @@ export async function main(): Promise<number> {
   return result.passes ? 0 : 1;
 }
 
-// Only auto-run when this file is executed directly, not when imported by a test.
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// Only auto-run when this file is executed directly, not when imported by a
+// test. argv[1] has to be realpath'd first: npm installs `bin` entries as a
+// symlink (node_modules/.bin/pr-age-gate -> ../pr-age-gate/dist/cli.js), and
+// import.meta.url is always the resolved target. Comparing the two unresolved
+// makes the installed CLI silently exit 0 without doing anything.
+function isDirectRun(): boolean {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return import.meta.url === pathToFileURL(realpathSync(entry)).href;
+  } catch {
+    return false; // argv[1] isn't a real path (e.g. `node --eval`)
+  }
+}
+
+if (isDirectRun()) {
   main()
     .then((code) => {
       process.exitCode = code;

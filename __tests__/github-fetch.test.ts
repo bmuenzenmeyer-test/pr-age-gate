@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { githubRequest, fetchPullRequest, listOpenPullRequests, fetchChangedFiles } from "./github-fetch.ts";
+import { githubRequest, fetchPullRequest, listOpenPullRequests, fetchChangedFiles } from "../src/github-fetch.ts";
 import { withMockServer } from "./test-helpers.ts";
 
 test("retries a transient 503 and succeeds once the server recovers", async () => {

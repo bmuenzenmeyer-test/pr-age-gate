@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isBypassedByLabel, isBypassedByPath, globToRegExp, parseCommaSeparated } from "./bypass.ts";
+import { isBypassedByLabel, isBypassedByPath, globToRegExp, parseCommaSeparated } from "../src/bypass.ts";
 
 test("isBypassedByLabel: true when a PR label matches one of the configured bypass labels", () => {
   assert.equal(isBypassedByLabel(["bug", "urgent"], ["urgent", "hotfix"]), true);
