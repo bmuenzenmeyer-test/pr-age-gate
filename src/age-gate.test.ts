@@ -58,3 +58,12 @@ test("summaryFor reports a bypass via path with its own wording", () => {
   const output = summaryFor({ ...result, bypassed: true, bypassReason: "path" });
   assert.match(output.summary, /changed paths matching a bypass rule/);
 });
+
+test("summaryFor uses singular \"hour\" when a value rounds to exactly 1", () => {
+  const createdAt = new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(); // 1h old
+  const result = evaluateAgeGate(createdAt, 2, now); // needs 2h, 1h remaining
+  const output = summaryFor(result);
+  assert.match(output.summary, /open for 1\.0 hour;/);
+  assert.match(output.summary, /1\.0 more hour remains/);
+  assert.doesNotMatch(output.summary, /hour\(s\)/);
+});
