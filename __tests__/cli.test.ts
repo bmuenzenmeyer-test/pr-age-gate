@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseArgs, main } from "./cli.ts";
+import { parseArgs, main } from "../src/cli.ts";
 import { withMockServer } from "./test-helpers.ts";
 
 test("parseArgs pairs --flag value, and treats a flag with no value as true", () => {

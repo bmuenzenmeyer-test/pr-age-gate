@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { upsertCheckRun } from "./github-checks.ts";
+import { upsertCheckRun } from "../src/github-checks.ts";
 import { withMockServer } from "./test-helpers.ts";
 
 test("upsertCheckRun creates a new check run when none exists yet for that sha+name", async () => {

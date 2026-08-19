@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkPrAge } from "./check-pr-age.ts";
+import { checkPrAge } from "../src/check-pr-age.ts";
 import { withMockServer } from "./test-helpers.ts";
 
 test("checkPrAge works with no token at all, for a public repo", async () => {

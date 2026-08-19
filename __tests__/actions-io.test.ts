@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { getInput, setFailed } from "./actions-io.ts";
+import { getInput, setFailed } from "../src/actions-io.ts";
 
 test("getInput reads the INPUT_<NAME> convention with hyphens preserved (not underscored)", () => {
   process.env["INPUT_MIN-HOURS"] = "72";
