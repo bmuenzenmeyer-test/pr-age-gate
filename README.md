@@ -16,6 +16,10 @@ underlying code:
   to be independently runnable by anyone — a contributor, a bot, a third
   party auditing a claim — not just the repo owner.
 
+![A screenshot of the PR status checks](/.github/status.png)
+
+and details...
+
 ![A screenshot of the action succeeding after configured PR age is met.](/.github/success.png)
 
 ## As a GitHub Action
