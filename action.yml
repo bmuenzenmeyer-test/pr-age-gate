@@ -1,5 +1,5 @@
 name: "PR Age Gate"
-description: "Keeps a check red until a pull request has been open for a configurable minimum number of hours, then turns it green. Runs as plain TypeScript via Node's native type stripping — no build step, no runtime dependencies."
+description: "Keeps a check red until a pull request has been open for a configurable minimum number of hours, then turns it green."
 author: "Brian Muenzenmeyer"
 branding:
   icon: "clock"

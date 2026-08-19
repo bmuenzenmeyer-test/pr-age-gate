@@ -26,3 +26,7 @@ jobs:
       - run: vlt install
       - run: vlt run typecheck
       - run: vlt run test
+      # Nothing consumes dist/ here — this only proves the npm publish
+      # build still emits, so a broken build surfaces on the PR rather
+      # than on release day.
+      - run: vlt run build

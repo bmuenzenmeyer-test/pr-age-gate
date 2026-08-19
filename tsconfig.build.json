@@ -1,0 +1,21 @@
+{
+  // Publish-only build. Node can't strip types under node_modules
+  // (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING), so the npm package has
+  // to ship JS. The GitHub Action doesn't: it's consumed by git tag, gets
+  // checked out to _actions/... rather than node_modules, and keeps
+  // running src/action.ts directly. Nothing here is committed or needed
+  // to develop — see `prepack` in package.json.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    // Source imports "./age-gate.ts"; without this the emitted JS would
+    // too, and would resolve to nothing.
+    "rewriteRelativeImportExtensions": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  // Pinned rather than inherited: the base config also includes __tests__/,
+  // which would conflict with rootDir and drag tests into the tarball.
+  "include": ["src"]
+}

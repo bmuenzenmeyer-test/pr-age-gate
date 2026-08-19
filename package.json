@@ -2,7 +2,7 @@
   "name": "pr-age-gate",
   "version": "0.2.0",
   "type": "module",
-  "description": "Verify (and, as a GitHub Action, enforce) that a pull request has been open for a configurable minimum number of hours before it's considered mergeable. Public-repo checks work with no token at all. Plain TypeScript, no build step, no runtime dependencies.",
+  "description": "Verify (and, as a GitHub Action, enforce) that a pull request has been open for a configurable minimum number of hours before it's considered mergeable. Public-repo checks work with no token at all. Plain TypeScript, no runtime dependencies: the Action runs the source directly via Node's type stripping, the npm package ships compiled JS.",
   "keywords": [
     "github",
     "github-actions",
@@ -14,22 +14,25 @@
     "node": ">=24.11.0"
   },
   "bin": {
-    "pr-age-gate": "./src/cli.ts"
+    "pr-age-gate": "./dist/cli.js"
   },
   "exports": {
-    ".": "./src/check-pr-age.ts"
+    ".": {
+      "types": "./dist/check-pr-age.d.ts",
+      "default": "./dist/check-pr-age.js"
+    }
   },
   "files": [
-    "src",
-    "!src/**/*.test.ts",
-    "!src/test-helpers.ts",
+    "dist",
     "action.yml",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/**/*.test.ts"
+    "test": "node --test __tests__/**/*.test.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "tsc -p tsconfig.build.json"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
