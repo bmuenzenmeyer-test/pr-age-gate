@@ -16,7 +16,13 @@ permissions:
   pull-requests: read
 
 jobs:
-  age-gate:
+  # Named "run", not "age-gate" — this job id is what shows up on the PR
+  # as "PR Age Gate (dogfooding) / <id>", a GitHub Actions job-status
+  # check that's separate from (and easily confused with) the actual
+  # "pr-age-gate" check run this job creates via the Checks API below.
+  # This job going green only means the script ran without throwing; the
+  # real red/green verdict lives on the "pr-age-gate" check.
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
