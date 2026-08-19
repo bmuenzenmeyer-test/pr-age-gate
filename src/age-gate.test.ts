@@ -31,18 +31,19 @@ test("a zero-hour minimum always passes", () => {
   assert.equal(result.passes, true);
 });
 
-test("summaryFor produces a failure conclusion with remaining time mentioned", () => {
+test("summaryFor produces a failure conclusion with remaining time mentioned in hours and minutes", () => {
   const result = evaluateAgeGate(new Date(now.getTime() - 10 * 60 * 60 * 1000).toISOString(), 48, now);
   const output = summaryFor(result);
   assert.equal(output.conclusion, "failure");
-  assert.match(output.summary, /38\.0 more hour/);
+  assert.match(output.summary, /about 38 hours remain/);
+  assert.doesNotMatch(output.summary, /\d+\.\d/);
 });
 
 test("summaryFor produces a success conclusion once the age requirement is met", () => {
   const result = evaluateAgeGate(new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(), 48, now);
   const output = summaryFor(result);
   assert.equal(output.conclusion, "success");
-  assert.match(output.summary, /meeting the 48-hour minimum/);
+  assert.match(output.summary, /minimum age requirement of 48 hours/);
 });
 
 test("summaryFor reports a bypass via label as success, even for a PR that's far too young", () => {
@@ -59,11 +60,20 @@ test("summaryFor reports a bypass via path with its own wording", () => {
   assert.match(output.summary, /changed paths matching a bypass rule/);
 });
 
-test("summaryFor uses singular \"hour\" when a value rounds to exactly 1", () => {
+test("summaryFor uses singular \"hour\"/\"remains\" when exactly 1 hour remains", () => {
   const createdAt = new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(); // 1h old
   const result = evaluateAgeGate(createdAt, 2, now); // needs 2h, 1h remaining
   const output = summaryFor(result);
-  assert.match(output.summary, /open for 1\.0 hour;/);
-  assert.match(output.summary, /1\.0 more hour remains/);
+  assert.match(output.summary, /open for 1 hour;/);
+  assert.match(output.summary, /about 1 hour remains\./);
   assert.doesNotMatch(output.summary, /hour\(s\)/);
+});
+
+test("summaryFor breaks fractional hours into hours and minutes instead of a decimal", () => {
+  const createdAt = new Date(now.getTime() - 90 * 60 * 1000).toISOString(); // 1h30m old
+  const result = evaluateAgeGate(createdAt, 5, now); // needs 5h, 3h30m remaining
+  const output = summaryFor(result);
+  assert.match(output.title, /Open for 1h 30m — needs 5h \(3h 30m remaining\)/);
+  assert.match(output.summary, /open for 1 hour and 30 minutes/);
+  assert.match(output.summary, /about 3 hours and 30 minutes remain\./);
 });
