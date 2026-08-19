@@ -33,4 +33,6 @@ jobs:
           # you can actually watch a check flip red->green within a
           # normal testing session instead of waiting two real days.
           min-hours: "1"
+          # bypass-labels and bypass-paths demos
           bypass-labels: "skip-age-gate"
+          bypass-paths: "test/path/to/skip/**"
