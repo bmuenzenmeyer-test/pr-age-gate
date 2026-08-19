@@ -4,17 +4,72 @@ Verifies that a pull request has been open for a configurable minimum
 number of hours. Two ways to use it, from one repo, sharing the same
 underlying code:
 
+- **As a GitHub Action** — a thin wrapper around the same library that
+  additionally *writes* a check run back to the PR (which does need a
+  token, since writing always does), keeping a check **red** until the
+  minimum age is met, then flipping it **green** on its own via an hourly
+  schedule — no new commit required.
 - **As a CLI/library** (`pr-age-gate` on npm) — a standalone verifier.
   Works against **any public repo with no token at all**: it's just
   reading `pulls/{number}`, which GitHub serves unauthenticated (rate
   limited to 60 req/hr instead of 5000/hr, but no setup required). Meant
   to be independently runnable by anyone — a contributor, a bot, a third
   party auditing a claim — not just the repo owner.
-- **As a GitHub Action** — a thin wrapper around the same library that
-  additionally *writes* a check run back to the PR (which does need a
-  token, since writing always does), keeping a check **red** until the
-  minimum age is met, then flipping it **green** on its own via an hourly
-  schedule — no new commit required.
+
+![A screenshot of the PR status checks](/.github/status.png)
+
+and details...
+
+![A screenshot of the action succeeding after configured PR age is met.](/.github/success.png)
+
+## As a GitHub Action
+
+```yaml
+name: PR Age Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  schedule:
+    - cron: "0 * * * *" # hourly — re-evaluates every open PR
+
+permissions:
+  checks: write
+  pull-requests: read
+
+jobs:
+  age-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # required so the action's own code is present to run
+      - uses: bmuenzenmeyer/pr-age-gate@v1
+        with:
+          min-hours: "48"
+          bypass-labels: "urgent,hotfix" # optional
+          bypass-paths: "docs/**,*.md"   # optional — costs one extra API call per PR, only made if this is set
+```
+
+Both triggers point at the **same workflow**, and that's intentional:
+
+- `pull_request` events give fast feedback on the PR itself the moment
+  it's opened or pushed to.
+- `schedule` has no single PR in context, so it re-evaluates every open
+  PR in the repo — this is what actually flips a PR from red to green
+  once enough wall-clock time has passed, since nothing else about the
+  PR needs to change for that to happen.
+
+Add the check's name (`pr-age-gate` by default) as a required status
+check in your branch protection rules to actually block merging on it.
+
+### Action inputs
+
+| Input | Default | Description |
+|---|---|---|
+| `min-hours` | `48` | Minimum hours a PR must stay open before this check passes. |
+| `check-name` | `pr-age-gate` | Name of the check run. Change this if you want more than one age gate (e.g. different thresholds) on the same repo. |
+| `bypass-labels` | *(none)* | Comma-separated PR labels that make this check pass immediately, regardless of age. |
+| `bypass-paths` | *(none)* | Comma-separated glob patterns — if every file the PR changes matches one, the check passes immediately regardless of age. |
+| `github-token` | `${{ github.token }}` | Token used to list PRs and create/update check runs. The default Actions token is sufficient; needs `checks: write` and `pull-requests: read` permissions (see example above). |
 
 ## As a CLI
 
@@ -74,55 +129,6 @@ if (!result.passes) {
   console.log(`Passed via bypass: ${result.bypassReason}`);
 }
 ```
-
-## As a GitHub Action
-
-```yaml
-name: PR Age Gate
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-  schedule:
-    - cron: "0 * * * *" # hourly — re-evaluates every open PR
-
-permissions:
-  checks: write
-  pull-requests: read
-
-jobs:
-  age-gate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4 # required so the action's own code is present to run
-      - uses: bmuenzenmeyer/pr-age-gate@v1
-        with:
-          min-hours: "48"
-          bypass-labels: "urgent,hotfix" # optional
-          bypass-paths: "docs/**,*.md"   # optional — costs one extra API call per PR, only made if this is set
-```
-
-Both triggers point at the **same workflow**, and that's intentional:
-
-- `pull_request` events give fast feedback on the PR itself the moment
-  it's opened or pushed to.
-- `schedule` has no single PR in context, so it re-evaluates every open
-  PR in the repo — this is what actually flips a PR from red to green
-  once enough wall-clock time has passed, since nothing else about the
-  PR needs to change for that to happen.
-
-Add the check's name (`pr-age-gate` by default) as a required status
-check in your branch protection rules to actually block merging on it.
-
-### Action inputs
-
-| Input | Default | Description |
-|---|---|---|
-| `min-hours` | `48` | Minimum hours a PR must stay open before this check passes. |
-| `check-name` | `pr-age-gate` | Name of the check run. Change this if you want more than one age gate (e.g. different thresholds) on the same repo. |
-| `bypass-labels` | *(none)* | Comma-separated PR labels that make this check pass immediately, regardless of age. |
-| `bypass-paths` | *(none)* | Comma-separated glob patterns — if every file the PR changes matches one, the check passes immediately regardless of age. |
-| `github-token` | `${{ github.token }}` | Token used to list PRs and create/update check runs. The default Actions token is sufficient; needs `checks: write` and `pull-requests: read` permissions (see example above). |
 
 ## How it decides pass vs. fail
 
