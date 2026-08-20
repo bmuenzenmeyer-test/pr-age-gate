@@ -40,7 +40,6 @@ jobs:
   age-gate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # required so the action's own code is present to run
       - uses: bmuenzenmeyer/pr-age-gate@v1
         with:
           min-hours: "48"
@@ -82,6 +81,7 @@ npx pr-age-gate --owner facebook --repo react --pr 12345 --min-hours 48
   "ageHours": 2.1,
   "minHours": 48,
   "remainingHours": 45.9,
+  "bypassed": false,
   "owner": "facebook",
   "repo": "react",
   "pullNumber": 12345,
@@ -90,10 +90,10 @@ npx pr-age-gate --owner facebook --repo react --pr 12345 --min-hours 48
 }
 ```
 
-Exit codes: `0` = passes (old enough), `1` = fails (too young), `2` =
-couldn't determine at all (bad arguments, network/API error). Kept
-distinct from 0/1 so a caller can tell "the gate failed" apart from "the
-check itself broke."
+Exit codes: `0` = passes (old enough, or bypassed), `1` = fails (too
+young), `2` = couldn't determine at all (bad arguments, network/API
+error). Kept distinct from 0/1 so a caller can tell "the gate failed"
+apart from "the check itself broke."
 
 Flags or environment variables, either works:
 
@@ -106,6 +106,7 @@ Flags or environment variables, either works:
 | `--token` | `PR_AGE_GATE_TOKEN` / `GITHUB_TOKEN` | *(none, unauthenticated)* |
 | `--bypass-labels` | `PR_AGE_GATE_BYPASS_LABELS` | *(none)*; comma-separated, e.g. `urgent,hotfix` |
 | `--bypass-paths` | `PR_AGE_GATE_BYPASS_PATHS` | *(none)*; comma-separated globs, e.g. `docs/**,*.md` |
+| *(no flag)* | `GITHUB_API_URL` | `https://api.github.com`; set it for GitHub Enterprise Server (`https://HOSTNAME/api/v3`) |
 
 ## As a library
 
@@ -120,6 +121,7 @@ const result = await checkPrAge({
   // token: optional, omit for public repos
   bypassLabels: ["urgent"], // optional
   bypassPaths: ["docs/**"], // optional, costs one extra API call, only made if this is set
+  // apiBaseUrl: optional, for GitHub Enterprise Server ("https://HOSTNAME/api/v3")
 });
 
 if (!result.passes) {
